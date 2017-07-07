@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>登录认证</title>
+		<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+		<style>
+			.login {
+				width: 60%;
+				margin: auto;
+				margin-top: 100px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="panel panel-default login">
+				<div class="panel-heading">
+					<%
+						if (has(client_name)) {
+					%>
+						使用你的访问账号 <span class="label label-danger">${client_name}</span> ，并同登录系统
+					<%
+						} else {
+					%>
+						登录认证
+					<%
+						}
+					%>
+				</div>
+				<div class="panel-body">
+					<form class="form-horizontal" action="/login" method="POST">
+						<div class="form-group">
+							<label for="userName" class="col-sm-2 control-label">用户名</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="userName" name="userName" placeholder="用户名">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="password" class="col-sm-2 control-label">Password</label>
+							<div class="col-sm-10">
+								<input type="password" class="form-control" id="password" name="password" placeholder="Password">
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-2 col-sm-10">
+								<button type="button" id="btnLogin" class="btn btn-default">登录</button>
+								<button type="button" class="btn btn-default">取消</button>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-2 col-sm-10">
+								<span class="label label-danger" id="msg"></span>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<script>
+				let $userName = document.querySelector('#userName');
+				let $password = document.querySelector('#password');
+				let $msg = document.querySelector('#msg');
+
+				document.querySelector('#btnLogin').addEventListener('click', () => {
+					fetch('/login', {
+						method: 'POST',
+						credentials: 'include', //需要携带此参数，不同于xhr 会自动处理请求、与响应的cookie认证信息
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+						},
+						body: 'userName=' + $userName.value + '&password=' + $password.value
+					}).then(res => {
+						res.json().then(ret => {
+							if (ret.code === '0000') {
+								if (location.pathname === '/oauth2/authorize') {
+									location.reload();
+								} else {
+									location.href = '/';							
+								}
+							} else {
+								$msg.textContent = ret.msg;
+							}
+						});
+					});
+				});
+			</script>
+	</body>
+</html>

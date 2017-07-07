@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>应用授权</title>
+	<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+	<div class="container" style="width: 40%; margin: auto;">
+		<div class="row clearfix">
+			<div class="col-md-12 column">
+				<h2 class="text-center">Authorize ${client_name!}</h2>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div class="col-md-6 column">
+					<dl>
+						<dd>
+							Authorizing will redirect to 
+						</dd>
+						<dt>
+							${redirect_uri!}
+						</dt>
+					</dl>
+				</div>
+				<div class="col-md-6 column">
+					<form action="/oauth2/userAccept" method="POST">
+						<input type="hidden" name="client_id" value="${client_id!}"/>
+						<input type="hidden" name="redirect_uri" value="${redirect_uri!}"/>
+						<input type="hidden" name="state" value="${state!}"/>
+						<button type="submit" class="btn btn-success btn-lg btn-block">授权给${client_name!}</button>
+						<button type="button" class="btn btn-default btn-lg btn-block">取消</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
