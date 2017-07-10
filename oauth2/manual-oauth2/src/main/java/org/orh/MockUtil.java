@@ -1,8 +1,14 @@
 package org.orh;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -12,10 +18,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 public class MockUtil {
-    public static void main(String[] args) {
-        System.out.println(UUID.randomUUID().toString());
-    }
-
     // user define
     // - id
     // - user_name
@@ -44,15 +46,16 @@ public class MockUtil {
             add(new OAuth2Client(1, "3200304793093138879", "third-client-2", "de08bf7f-daea-46d3-ae73-a6bd1621496a"));
         }
     };
-    
+
     /**
      * 检查 clientId是否合法、存在
+     * 
      * @param clientId
      */
     public static boolean checkClient(String clientId) {
         return oauth2ClientList.stream().filter(o -> o.clientId.equals(clientId)).count() > 0;
     }
-    
+
     /**
      * 根据 clientId获取 client信息
      */
@@ -70,7 +73,7 @@ public class MockUtil {
 
         @NotEmpty
         private String userName;
-        
+
         @NotEmpty
         private String password;
     }
@@ -85,8 +88,65 @@ public class MockUtil {
         private String clientSecret;
     }
 
-    static enum AuthorizerCode {
-        code;
+    static enum TimerCode {
+        authorizerCode(10 * 60 * 1000), // 授权码默认有效期 10分钟
+        accessToken(10 * 60 * 1000); // accessToken 30分钟有效
 
+        private ExpirtingMap map;
+
+        private TimerCode(long expirtingMillis) {
+            map = new ExpirtingMap(expirtingMillis);
+        }
+
+        public String generate(Object value) {
+            String code = UUID.randomUUID().toString().replaceAll("-", "");
+            map.put(code, value);
+            return code;
+        }
+
+        public Object getValue(String code) {
+            return map.get(code);
+        }
+    }
+
+    static class ExpirtingMap {
+        private Map<String, ValWrap> map;
+        private long millis;
+
+        public ExpirtingMap(long millis) {
+            System.out.println("init expirtingMap: " + millis);
+            map = new ConcurrentHashMap<>();
+            this.millis = millis;
+            autoClean();
+        }
+
+        public void put(String key, Object value) {
+            map.put(key, new ValWrap(key, value, LocalDateTime.now()));
+        }
+
+        public Object get(String key) {
+            return map.get(key).value;
+        }
+
+        private void autoClean() {
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                public void run() {
+                    System.out.println("auto clean...");
+                    map.entrySet().stream().forEach(v -> {
+                        if (Duration.between(LocalDateTime.now(), v.getValue().createAt).toMillis() > millis) {
+                            map.remove(v.getKey());
+                        }
+                    });
+                }
+            }, 0, 5 * 1000); // 每5秒检查一次
+        }
+
+        @AllArgsConstructor
+        class ValWrap {
+            String key;
+            Object value;
+            LocalDateTime createAt;
+        }
     }
 }

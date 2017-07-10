@@ -23,12 +23,17 @@ import lombok.Data;
 @Controller
 public class UserController {
 
+    /**
+     * session 中存储的登录认证信息
+     */
+    public static final String USER_SESSION_KEY = "_user";
+
     @Autowired
     protected HttpServletRequest request;
 
     @Autowired
     protected HttpServletResponse response;
-    
+
     @Autowired
     protected HttpSession session;
 
@@ -57,19 +62,18 @@ public class UserController {
             return RetMsg.error("请求参数不合法", result);
         }
 
-        boolean rs = MockUtil.userList.stream()
-                .filter(u -> u.getUserName().equals(user.getUserName()))
+        boolean rs = MockUtil.userList.stream().filter(u -> u.getUserName().equals(user.getUserName()))
                 .allMatch(u -> u.getPassword().equals(user.getPassword()));
 
         if (!rs) {
             return RetMsg.error("用户名或密码错误！");
 
         } else {
-            session.setAttribute("user", MockUtil.getUser(user.getUserName())); // 使用了session保存了会话信息
+            session.setAttribute(USER_SESSION_KEY, MockUtil.getUser(user.getUserName())); // 使用了session保存了会话信息
             return RetMsg.success();
         }
     }
-    
+
     @GetMapping("/logout")
     public ModelAndView logout() {
         request.getSession().invalidate();
@@ -83,8 +87,9 @@ public class UserController {
         private Object data;
 
         public static RetMsg success() {
-            return success("success", null); 
+            return success("success", null);
         }
+
         public static RetMsg success(String msg, Object data) {
             RetMsg retMsg = new RetMsg();
             retMsg.code = "0000";
@@ -94,9 +99,8 @@ public class UserController {
         }
 
         public static RetMsg error(String msg, BindingResult result) {
-            String detail = result.getFieldErrors().stream()
-                    .map(e -> e.getField() + ":" + e.getDefaultMessage())
-                    .reduce("", (acc, val) -> acc + val + ";");
+            String detail = result.getFieldErrors().stream().map(e -> e.getField() + ":" + e.getDefaultMessage()).reduce("",
+                    (acc, val) -> acc + val + ";");
             return RetMsg.error(msg, detail);
         }
 
