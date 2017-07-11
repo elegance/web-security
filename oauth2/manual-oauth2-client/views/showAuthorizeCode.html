@@ -5,8 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>获取了用户授权码</title>
+    <style>
+        input { width: 300px; height: 30px;}
+    </style>
 </head>
 <body>
-    
+    {%if oauth_provide === 'custom' %} {# 如果是自定义的 oauth_provide #}
+        <p>
+            获取到了用户授权码：<input id="code" type="text" value="{{code}}" />
+        </p>
+        <p>
+            <input type="button" id="btnNext" value="下一步请求后台，申请access_token">
+        </p>
+    {%else%}
+        不支持的 oauth_provide!
+    {%endif%}
+    <script>
+        document.querySelector('#btnNext').addEventListener('click', () => {
+            let code = document.querySelector('#code').value;
+            fetch(`/applyAccessToken?authorizeCode=${code}`, )
+            .then(resp => {
+                console.log(resp);
+            });
+        });
+    </script>
 </body>
 </html>
