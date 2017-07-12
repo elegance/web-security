@@ -125,7 +125,8 @@ public class MockUtil {
         }
 
         public Object get(String key) {
-            return map.get(key).value;
+            ValWrap v = map.get(key);
+            return v != null ? map.get(key).value : null;
         }
 
         private void autoClean() {

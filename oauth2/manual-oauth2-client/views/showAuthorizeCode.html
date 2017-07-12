@@ -7,27 +7,68 @@
     <title>获取了用户授权码</title>
     <style>
         input { width: 300px; height: 30px;}
+        p[id] {
+            display: none;
+        }
     </style>
 </head>
 <body>
     {%if oauth_provide === 'custom' %} {# 如果是自定义的 oauth_provide #}
         <p>
-            获取到了用户授权码：<input id="code" type="text" value="{{code}}" />
+            获取到了用户授权码：<input id="code" type="text" value="{{code}}" /> （这里的授权码可以重复使用，这是为了方便测试，使用1次后在后台没有将其删除）
+        </p>
+        <p id="div_token">
+            获取到了access_token: <input type="text" id="access_token"><br><br>
         </p>
         <p>
-            <input type="button" id="btnNext" value="下一步请求后台，申请access_token">
+            <input type="button" id="btnNext" value="下一步请求后台，申请access_token" data-pase="1">
         </p>
+        <div id="accessRs"></div>
     {%else%}
         不支持的 oauth_provide!
     {%endif%}
+
     <script>
-        document.querySelector('#btnNext').addEventListener('click', () => {
+        let btnNext = document.querySelector('#btnNext');
+        let iptAccessToken =document.querySelector('#access_token');
+
+        btnNext.addEventListener('click', () => {
+            let phase = btnNext.getAttribute('data-phase');
+            if (phase == 2) {
+                return accessData();
+            }
+
             let code = document.querySelector('#code').value;
             fetch(`/applyAccessToken?authorizeCode=${code}`, )
             .then(resp => {
-                console.log(resp);
+                return resp.json();
+            })
+            .then(json => {
+                if (json.code === '0000') {
+                    btnNext.value = '下一步拿着token请求数据';
+                    btnNext.setAttribute('data-phase', "2");
+
+                    document.querySelector('#div_token').style.display = 'block';
+                    iptAccessToken.value = json.data;
+                } else {
+                    alert(json.msg);
+                }
             });
         });
+
+        function accessData() {
+            fetch('http://127.0.0.1:8080/openapi/userName', {
+                headers: {
+                    'authentication-access-token': iptAccessToken.value
+                }
+            })
+            .then(resp => {
+                return resp.json();   
+            })
+            .then(json => {
+                document.querySelector('#accessRs').innerHTML = json.data;
+            });
+        }
     </script>
 </body>
 </html>

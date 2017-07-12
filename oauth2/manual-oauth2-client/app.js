@@ -31,8 +31,8 @@ app.all('/applyAccessToken', (req, res, next) => {
     console.log(`code=${authorizeCode}&client_id=${client_id}&client_secret=${client_secret}`);
 
     fetch(oauth_server + '/oauth2/access_token', {
+        method: 'POST',
         headers: {
-            method: 'POST',
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
         },
         body: `code=${authorizeCode}&client_id=${client_id}&client_secret=${client_secret}`

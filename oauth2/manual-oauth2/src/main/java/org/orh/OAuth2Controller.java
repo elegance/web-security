@@ -7,6 +7,7 @@ import org.orh.MockUtil.User;
 import org.orh.UserController.RetMsg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import lombok.AllArgsConstructor;
 
 @RestController
+@CrossOrigin
 public class OAuth2Controller {
 
     @Autowired
@@ -101,7 +103,7 @@ public class OAuth2Controller {
 
         // 1. 授权码存在，且没有过期，且授权码是否归属于 client_id
         AuthorizeCodeInfo authorizeCodeInfo = (AuthorizeCodeInfo) MockUtil.TimerCode.authorizerCode.getValue(code); // 授权码一般使用1次后生效，这里未实现
-        if (authorizeCodeInfo != null && authorizeCodeInfo.clientId != null && authorizeCodeInfo.clientId.equals(client_id)) {
+        if (authorizeCodeInfo == null || authorizeCodeInfo.clientId == null || !authorizeCodeInfo.clientId.equals(client_id)) {
             return RetMsg.error("授权码已失效!");
         }
 
