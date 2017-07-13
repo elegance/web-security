@@ -1,0 +1,91 @@
+{
+	"id": "76908dcc-3ec2-0503-cde3-4d5dd195eaa3",
+	"name": "shiro-oauth2",
+	"description": "",
+	"order": [
+		"cd7d2895-fcf2-8051-66c2-1f8e84f65ad5",
+		"f19122ea-20a2-ba28-feaa-9a538bddc5b9",
+		"12fe3df6-2b27-aab9-bbab-c18ef5fad43d"
+	],
+	"folders": [],
+	"timestamp": 1499914816098,
+	"owner": "220764",
+	"public": false,
+	"requests": [
+		{
+			"id": "12fe3df6-2b27-aab9-bbab-c18ef5fad43d",
+			"headers": "",
+			"headerData": [],
+			"url": "http://127.0.0.1:8080/user/1",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "76908dcc-3ec2-0503-cde3-4d5dd195eaa3",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://127.0.0.1:8080/user/1",
+			"description": "根据id查询用户",
+			"descriptionFormat": "html",
+			"time": 1499915018994,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "cd7d2895-fcf2-8051-66c2-1f8e84f65ad5",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://127.0.0.1:8080/user",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "76908dcc-3ec2-0503-cde3-4d5dd195eaa3",
+			"data": [],
+			"dataMode": "raw",
+			"name": "http://127.0.0.1:8080/user",
+			"description": "创建-user",
+			"descriptionFormat": "html",
+			"time": 1499914866766,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\"username\": \"test2\",\"password\":\"test-pwd2\",\"salt\":\"test-salt2\"}"
+		},
+		{
+			"id": "f19122ea-20a2-ba28-feaa-9a538bddc5b9",
+			"headers": "",
+			"headerData": [],
+			"url": "http://127.0.0.1:8080/user",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1499914993042,
+			"name": "http://127.0.0.1:8080/user",
+			"description": "列出所有用户",
+			"collectionId": "76908dcc-3ec2-0503-cde3-4d5dd195eaa3",
+			"responses": []
+		}
+	]
+}
